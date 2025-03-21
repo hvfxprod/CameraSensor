@@ -4,21 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camera Sensor Database</title>
-    <script defer src="script.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        select {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <h1>Camera Sensor Database</h1>
+    <h2>Camera Sensor Database</h2>
+    <label for="manufacturer">Select Manufacturer:</label>
+    <select id="manufacturer" onchange="updateModels()">
+        <option value="">-- Select Manufacturer --</option>
+    </select>
+    
+    <label for="model">Select Camera Model:</label>
+    <select id="model" onchange="displaySensorInfo()">
+        <option value="">-- Select Model --</option>
+    </select>
+    
+    <h3>Sensor Information</h3>
+    <table id="sensor-info">
+        <tr>
+            <th>Resolution Width</th>
+            <th>Resolution Height</th>
+            <th>Sensor mm Width</th>
+            <th>Sensor mm Height</th>
+            <th>Sensor mm Diagonal</th>
+            <th>Sensor Inches Width</th>
+            <th>Sensor Inches Height</th>
+            <th>Sensor Inches Diagonal</th>
+        </tr>
+        <tr id="sensor-data">
+            <td colspan="8">Select a camera to view details</td>
+        </tr>
+    </table>
+    
+    <script>
+        let cameraData = [];  // JSON 데이터를 저장할 배열
 
-    <label for="manufacturer">Manufacturer:</label>
-    <select id="manufacturer"></select>
+        async function fetchCameraData() {
+            try {
+                const response = await fetch("https://raw.githubusercontent.com/hvfxprod/CameraSensor/refs/heads/main/sensors.json");
+                if (!response.ok) throw new Error("Failed to fetch data");
 
-    <label for="camera">Camera Model:</label>
-    <select id="camera"></select>
+                cameraData = await response.json();  // JSON 데이터 저장
+                populateManufacturers();
+            } catch (error) {
+                console.error("Error fetching camera data:", error);
+            }
+        }
 
-    <label for="resolution">Resolution:</label>
-    <select id="resolution"></select>
+        function populateManufacturers() {
+            const manufacturerSelect = document.getElementById("manufacturer");
+            manufacturerSelect.innerHTML = '<option value="">-- Select Manufacturer --</option>';
+            const manufacturers = [...new Set(cameraData.map(camera => camera["Manufacturer"]))];
+            
+            manufacturers.forEach(manufacturer => {
+                let option = document.createElement("option");
+                option.value = manufacturer;
+                option.textContent = manufacturer;
+                manufacturerSelect.appendChild(option);
+            });
+        }
 
-    <div id="sensor-info"></div>
+        function updateModels() {
+            const selectedManufacturer = document.getElementById("manufacturer").value;
+            const modelSelect = document.getElementById("model");
+            modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
+            
+            if (!selectedManufacturer) return;
+            
+            const models = cameraData.filter(camera => camera["Manufacturer"] === selectedManufacturer)
+                                     .map(camera => camera["Model"]);
+            
+            models.forEach(model => {
+                let option = document.createElement("option");
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        }
+
+        function displaySensorInfo() {
+            const selectedModel = document.getElementById("model").value;
+            const sensorRow = document.getElementById("sensor-data");
+            
+            if (!selectedModel) {
+                sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
+                return;
+            }
+            
+            const selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
+            
+            sensorRow.innerHTML = `
+                <td>${selectedCamera["Resolution Width"]}</td>
+                <td>${selectedCamera["Resolution Height"]}</td>
+                <td>${selectedCamera["Sensor mm Width"]}</td>
+                <td>${selectedCamera["Sensor mm Height"]}</td>
+                <td>${selectedCamera["Sensor mm Diagonal"]}</td>
+                <td>${selectedCamera["Sensor Inches Width"]}</td>
+                <td>${selectedCamera["Sensor Inches Height"]}</td>
+                <td>${selectedCamera["Sensor Inches Diagonal"]}</td>
+            `;
+        }
+
+        // 페이지 로딩 후 데이터 가져오기
+        fetchCameraData();
+    </script>
 </body>
 </html>
