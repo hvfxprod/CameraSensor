@@ -4,132 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camera Sensor Database</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-        }
-        h2 {
-            color: #333;
-        }
-        select {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
-        }
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #007BFF;
-            color: white;
-        }
-    </style>
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>Camera Sensor Database</h2>
-    <label for="manufacturer">Select Manufacturer:</label>
-    <select id="manufacturer" onchange="updateModels()">
-        <option value="">-- Select Manufacturer --</option>
-    </select>
-    
-    <label for="model">Select Camera Model:</label>
-    <select id="model" onchange="displaySensorInfo()">
-        <option value="">-- Select Model --</option>
-    </select>
-    
-    <h3>Sensor Information</h3>
-    <table id="sensor-info">
-        <tr>
-            <th>Resolution Width</th>
-            <th>Resolution Height</th>
-            <th>Sensor mm Width</th>
-            <th>Sensor mm Height</th>
-            <th>Sensor mm Diagonal</th>
-            <th>Sensor Inches Width</th>
-            <th>Sensor Inches Height</th>
-            <th>Sensor Inches Diagonal</th>
-        </tr>
-        <tr id="sensor-data">
-            <td colspan="8">Select a camera to view details</td>
-        </tr>
-    </table>
-    
-    <script>
-        const cameraData = [
-            {"Manufacturer": "Sony", "Model": "FX6", "Resolution Width": 4096, "Resolution Height": 2160, "Sensor mm Width": 35.6, "Sensor mm Height": 18.8, "Sensor mm Diagonal": 40.8, "Sensor Inches Width": 1.4, "Sensor Inches Height": 0.74, "Sensor Inches Diagonal": 1.6},
-            {"Manufacturer": "Sony", "Model": "FX3", "Resolution Width": 3840, "Resolution Height": 2160, "Sensor mm Width": 35.6, "Sensor mm Height": 20.0, "Sensor mm Diagonal": 41.0, "Sensor Inches Width": 1.4, "Sensor Inches Height": 0.79, "Sensor Inches Diagonal": 1.6},
-            {"Manufacturer": "Sony", "Model": "FX9", "Resolution Width": 6008, "Resolution Height": 3168, "Sensor mm Width": 35.7, "Sensor mm Height": 18.8, "Sensor mm Diagonal": 40.9, "Sensor Inches Width": 1.4, "Sensor Inches Height": 0.74, "Sensor Inches Diagonal": 1.6},
-            {"Manufacturer": "RED", "Model": "Komodo", "Resolution Width": 6144, "Resolution Height": 3240, "Sensor mm Width": 27.03, "Sensor mm Height": 14.26, "Sensor mm Diagonal": 30.56, "Sensor Inches Width": 1.06, "Sensor Inches Height": 0.56, "Sensor Inches Diagonal": 1.2},
-            {"Manufacturer": "RED", "Model": "Helium", "Resolution Width": 8192, "Resolution Height": 4320, "Sensor mm Width": 29.90, "Sensor mm Height": 15.77, "Sensor mm Diagonal": 33.5, "Sensor Inches Width": 1.18, "Sensor Inches Height": 0.62, "Sensor Inches Diagonal": 1.3}
-        ];
+    <h1>Camera Sensor Database</h1>
 
-        function populateManufacturers() {
-            const manufacturerSelect = document.getElementById("manufacturer");
-            manufacturerSelect.innerHTML = '<option value="">-- Select Manufacturer --</option>';
-            const manufacturers = [...new Set(cameraData.map(camera => camera["Manufacturer"]))];
-            
-            manufacturers.forEach(manufacturer => {
-                let option = document.createElement("option");
-                option.value = manufacturer;
-                option.textContent = manufacturer;
-                manufacturerSelect.appendChild(option);
-            });
-        }
+    <label for="manufacturer">Manufacturer:</label>
+    <select id="manufacturer"></select>
 
-        function updateModels() {
-            const selectedManufacturer = document.getElementById("manufacturer").value;
-            const modelSelect = document.getElementById("model");
-            modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
-            
-            if (!selectedManufacturer) return;
-            
-            const models = cameraData.filter(camera => camera["Manufacturer"] === selectedManufacturer)
-                                     .map(camera => camera["Model"]);
-            
-            models.forEach(model => {
-                let option = document.createElement("option");
-                option.value = model;
-                option.textContent = model;
-                modelSelect.appendChild(option);
-            });
-        }
+    <label for="camera">Camera Model:</label>
+    <select id="camera"></select>
 
-        function displaySensorInfo() {
-            const selectedModel = document.getElementById("model").value;
-            const sensorRow = document.getElementById("sensor-data");
-            
-            if (!selectedModel) {
-                sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
-                return;
-            }
-            
-            const selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
-            
-            sensorRow.innerHTML = `
-                <td>${selectedCamera["Resolution Width"]}</td>
-                <td>${selectedCamera["Resolution Height"]}</td>
-                <td>${selectedCamera["Sensor mm Width"]}</td>
-                <td>${selectedCamera["Sensor mm Height"]}</td>
-                <td>${selectedCamera["Sensor mm Diagonal"]}</td>
-                <td>${selectedCamera["Sensor Inches Width"]}</td>
-                <td>${selectedCamera["Sensor Inches Height"]}</td>
-                <td>${selectedCamera["Sensor Inches Diagonal"]}</td>
-            `;
-        }
+    <label for="resolution">Resolution:</label>
+    <select id="resolution"></select>
 
-        populateManufacturers();
-    </script>
+    <div id="sensor-info"></div>
 </body>
 </html>
