@@ -9077,6 +9077,7 @@
             const filteredModels = cameraData
                 .map(camera => camera.Model)
                 .filter(model => model.toLowerCase().includes(input));
+                .slice(0,10);
 
             filteredModels.forEach(model => {
                 let div = document.createElement("div");
