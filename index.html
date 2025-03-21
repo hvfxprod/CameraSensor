@@ -9094,63 +9094,26 @@
         function selectModelFromSearch(modelName) {
             const modelSelect = document.getElementById("model");
             modelSelect.value = modelName;
-            displaySensorInfo();
+            displaySensorInfo(modelName);
         }
 
-        function populateManufacturers() {
-            const manufacturerSelect = document.getElementById("manufacturer");
-            manufacturerSelect.innerHTML = '<option value="">-- Select Manufacturer --</option>';
-            const manufacturers = [...new Set(cameraData.map(camera => camera["Manufacturer"]))];
-
-            manufacturers.forEach(manufacturer => {
-                let option = document.createElement("option");
-                option.value = manufacturer;
-                option.textContent = manufacturer;
-                manufacturerSelect.appendChild(option);
-            });
+        function displaySensorInfo(selectedModel = null) {
+                const modelSelect = document.getElementById("model");
+                const sensorRow = document.getElementById("sensor-data");
+        
+                let selectedCamera;
+        
+                if (selectedModel) {
+                    selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
+                } else {
+                    selectedCamera = cameraData.find(camera => camera["Model"] === modelSelect.value);
+                }
+        
+                if (!selectedCamera) {
+                    sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
+                    return;
         }
 
-        function updateModels() {
-            const selectedManufacturer = document.getElementById("manufacturer").value;
-            const modelSelect = document.getElementById("model");
-            modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
-            
-            if (!selectedManufacturer) return;
-
-            const models = cameraData
-                .filter(camera => camera["Manufacturer"] === selectedManufacturer)
-                .map(camera => camera["Model"]);
-
-            models.forEach(model => {
-                let option = document.createElement("option");
-                option.value = model;
-                option.textContent = model;
-                modelSelect.appendChild(option);
-            });
-        }
-
-        function displaySensorInfo() {
-            const selectedModel = document.getElementById("model").value;
-            const sensorRow = document.getElementById("sensor-data");
-
-            if (!selectedModel) {
-                sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
-                return;
-            }
-
-            const selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
-
-            sensorRow.innerHTML = `
-                <td>${selectedCamera["Resolution Width"]}</td>
-                <td>${selectedCamera["Resolution Height"]}</td>
-                <td>${selectedCamera["Sensor mm Width"]}</td>
-                <td>${selectedCamera["Sensor mm Height"]}</td>
-                <td>${selectedCamera["Sensor mm Diagonal"]}</td>
-                <td>${selectedCamera["Sensor Inches Width"]}</td>
-                <td>${selectedCamera["Sensor Inches Height"]}</td>
-                <td>${selectedCamera["Sensor Inches Diagonal"]}</td>
-            `;
-        }
 
         document.addEventListener("DOMContentLoaded", populateManufacturers);
     </script>
