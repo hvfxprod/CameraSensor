@@ -67,21 +67,15 @@
     </table>
     
     <script>
-        const jsonUrl = "https://hvfxprod.github.io/CameraSensor/sensors.json";
+        const cameraData = [
+            {"Manufacturer": "Sony", "Model": "FX6", "Resolution Width": 4096, "Resolution Height": 2160, "Sensor mm Width": 35.6, "Sensor mm Height": 18.8, "Sensor mm Diagonal": 40.8, "Sensor Inches Width": 1.4, "Sensor Inches Height": 0.74, "Sensor Inches Diagonal": 1.6},
+            {"Manufacturer": "Sony", "Model": "FX3", "Resolution Width": 3840, "Resolution Height": 2160, "Sensor mm Width": 35.6, "Sensor mm Height": 20.0, "Sensor mm Diagonal": 41.0, "Sensor Inches Width": 1.4, "Sensor Inches Height": 0.79, "Sensor Inches Diagonal": 1.6},
+            {"Manufacturer": "Sony", "Model": "FX9", "Resolution Width": 6008, "Resolution Height": 3168, "Sensor mm Width": 35.7, "Sensor mm Height": 18.8, "Sensor mm Diagonal": 40.9, "Sensor Inches Width": 1.4, "Sensor Inches Height": 0.74, "Sensor Inches Diagonal": 1.6},
+            {"Manufacturer": "RED", "Model": "Komodo", "Resolution Width": 6144, "Resolution Height": 3240, "Sensor mm Width": 27.03, "Sensor mm Height": 14.26, "Sensor mm Diagonal": 30.56, "Sensor Inches Width": 1.06, "Sensor Inches Height": 0.56, "Sensor Inches Diagonal": 1.2},
+            {"Manufacturer": "RED", "Model": "Helium", "Resolution Width": 8192, "Resolution Height": 4320, "Sensor mm Width": 29.90, "Sensor mm Height": 15.77, "Sensor mm Diagonal": 33.5, "Sensor Inches Width": 1.18, "Sensor Inches Height": 0.62, "Sensor Inches Diagonal": 1.3}
+        ];
     
-        fetch(jsonUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                initializeCameraData(data);
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    
-        function initializeCameraData(cameraData) {
+        function populateManufacturers() {
             const manufacturerSelect = document.getElementById("manufacturer");
             manufacturerSelect.innerHTML = '<option value="">-- Select Manufacturer --</option>';
             const manufacturers = [...new Set(cameraData.map(camera => camera["Manufacturer"]))];
@@ -92,8 +86,6 @@
                 option.textContent = manufacturer;
                 manufacturerSelect.appendChild(option);
             });
-    
-            window.cameraData = cameraData; // 전역 변수로 저장
         }
     
         function updateModels() {
@@ -101,9 +93,9 @@
             const modelSelect = document.getElementById("model");
             modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
             
-            if (!selectedManufacturer || !window.cameraData) return;
+            if (!selectedManufacturer) return;
     
-            const models = window.cameraData
+            const models = cameraData
                 .filter(camera => camera["Manufacturer"] === selectedManufacturer)
                 .map(camera => camera["Model"]);
     
@@ -119,12 +111,12 @@
             const selectedModel = document.getElementById("model").value;
             const sensorRow = document.getElementById("sensor-data");
     
-            if (!selectedModel || !window.cameraData) {
+            if (!selectedModel) {
                 sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
                 return;
             }
     
-            const selectedCamera = window.cameraData.find(camera => camera["Model"] === selectedModel);
+            const selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
     
             sensorRow.innerHTML = `
                 <td>${selectedCamera["Resolution Width"]}</td>
@@ -137,7 +129,8 @@
                 <td>${selectedCamera["Sensor Inches Diagonal"]}</td>
             `;
         }
+    
+        document.addEventListener("DOMContentLoaded", populateManufacturers);
     </script>
-
 </body>
 </html>
