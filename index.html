@@ -67,7 +67,7 @@
     </table>
     
     <script>
-        const jsonUrl = "https://raw.githubusercontent.com/EmberLightVFX/Camera-Sensor-Database/refs/heads/main/data/sensors.json";
+        const jsonUrl = "https://raw.githubusercontent.com/EmberLightVFX/Camera-Sensor-Database/main/data/sensors.json";
         let cameraData = [];
 
         function fetchJSONData() {
@@ -75,7 +75,7 @@
                 .then(response => response.json())
                 .then(data => {
                     cameraData = data;
-                    console.log(cameraData); // 데이터 확인
+                    console.log("Fetched from URL:", cameraData);
                     populateManufacturers();
                 })
                 .catch(error => console.error("Error fetching data:", error));
