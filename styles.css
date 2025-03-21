@@ -1,19 +1,55 @@
+/* 전체 페이지 설정 */
 body {
     font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
 }
 
+/* 제목 스타일 */
+h2 {
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+/* 드롭다운 스타일 */
 select {
-    display: block;
-    margin: 10px 0;
-    padding: 5px;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 8px;
+    margin: 5px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
+/* 선택 항목 스타일 */
+option {
+    background-color: #444;
+    color: #fff;
+}
+
+/* 센서 정보 박스 */
 #sensor-info {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background: #f9f9f9;
+    border: 1px solid #444;
+    padding: 20px;
+    margin-top: 15px;
+    width: 50%;
+    text-align: center;
+    background-color: #222;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* 문단 스타일 */
+p {
+    background-color: #222;
+    color: #ddd;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
 }
