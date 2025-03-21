@@ -67,11 +67,15 @@
     </table>
     
     <script>
-        const proxyUrl = "https://cors-anywhere.herokuapp.com/"; 
-        const rawJsonUrl = "https://raw.githubusercontent.com/hvfxprod/CameraSensor/refs/heads/main/sensors.json";
+        const jsonUrl = "https://hvfxprod.github.io/CameraSensor/sensors.json";
     
-        fetch(proxyUrl + rawJsonUrl)
-            .then(response => response.json())
+        fetch(jsonUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
             .then(data => {
                 initializeCameraData(data);
             })
