@@ -11,8 +11,11 @@
             text-align: center;
             padding: 20px;
         }
-        h2 {
+        h2, h4 {
             color: #333;
+        }
+        h4 {
+            font-weight: bold;
         }
         input, select {
             padding: 10px;
@@ -38,7 +41,7 @@
         .autocomplete-list {
             border: 1px solid #ddd;
             background: white;
-            max-height: 300px; /* 최대 10개 표시 가능하도록 조정 */
+            max-height: 300px;
             overflow-y: auto;
             position: absolute;
             width: calc(100% - 20px);
@@ -71,6 +74,7 @@
     </select>
     
     <h3>Sensor Information</h3>
+    <h4 id="selected-camera-name"></h4> <!-- 🔹 선택한 카메라 모델명을 표시할 영역 -->
     <table id="sensor-info">
         <tr>
             <th>Resolution Width</th>
@@ -9077,7 +9081,7 @@
             const filteredModels = cameraData
                 .map(camera => camera.Model)
                 .filter(model => model.toLowerCase().includes(input))
-                .slice(0, 10);  // 최대 10개까지만 표시
+                .slice(0, 10);  
 
             filteredModels.forEach(model => {
                 let div = document.createElement("div");
@@ -9095,7 +9099,7 @@
         function selectModelFromSearch(modelName) {
             const modelSelect = document.getElementById("model");
             modelSelect.value = modelName;
-            displaySensorInfo(modelName); // 🔹 모델 선택 시 데이터 표시
+            displaySensorInfo(modelName); 
         }
 
         function populateManufacturers() {
@@ -9133,6 +9137,7 @@
         function displaySensorInfo(selectedModel = null) {
             const modelSelect = document.getElementById("model");
             const sensorRow = document.getElementById("sensor-data");
+            const cameraName = document.getElementById("selected-camera-name"); // 🔹 선택된 카메라 모델명 표시
 
             let selectedCamera;
 
@@ -9144,8 +9149,12 @@
 
             if (!selectedCamera) {
                 sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
+                cameraName.textContent = ""; // 🔹 선택한 모델이 없을 경우 숨김
                 return;
             }
+
+            // 🔹 선택된 카메라 모델명 표시
+            cameraName.textContent = selectedCamera["Model"];
 
             sensorRow.innerHTML = `
                 <td>${selectedCamera["Resolution Width"]}</td>
