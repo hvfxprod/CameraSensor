@@ -67,38 +67,20 @@
     </table>
     
     <script>
-        let cameraData = [];  // JSON 데이터를 저장할 배열
+        const proxyUrl = "https://cors-anywhere.herokuapp.com/"; 
+        const rawJsonUrl = "https://raw.githubusercontent.com/hvfxprod/CameraSensor/refs/heads/main/sensors.json";
     
-        async function fetchCameraData() {
-            try {
-                const response = await fetch("https://raw.githubusercontent.com/hvfxprod/CameraSensor/main/sensors.json");  
-                if (!response.ok) throw new Error("Failed to fetch data");
+        fetch(proxyUrl + rawJsonUrl)
+            .then(response => response.json())
+            .then(data => {
+                initializeCameraData(data);
+            })
+            .catch(error => console.error("Error fetching data:", error));
     
-                cameraData = await response.json();  // JSON 데이터 저장
-                console.log("Fetched Camera Data:", cameraData); // 데이터 확인용
-    
-                if (!Array.isArray(cameraData)) {
-                    throw new Error("Invalid data format: Expected an array");
-                }
-    
-                populateManufacturers();
-            } catch (error) {
-                console.error("Error fetching camera data:", error);
-            }
-        }
-    
-        function populateManufacturers() {
+        function initializeCameraData(cameraData) {
             const manufacturerSelect = document.getElementById("manufacturer");
             manufacturerSelect.innerHTML = '<option value="">-- Select Manufacturer --</option>';
-    
-            if (cameraData.length === 0) {
-                console.error("No camera data available");
-                return;
-            }
-    
             const manufacturers = [...new Set(cameraData.map(camera => camera["Manufacturer"]))];
-            
-            console.log("Manufacturers List:", manufacturers); // 제조사 목록 확인
     
             manufacturers.forEach(manufacturer => {
                 let option = document.createElement("option");
@@ -106,9 +88,51 @@
                 option.textContent = manufacturer;
                 manufacturerSelect.appendChild(option);
             });
+    
+            window.cameraData = cameraData; // 전역 변수로 저장
         }
     
-        fetchCameraData();
+        function updateModels() {
+            const selectedManufacturer = document.getElementById("manufacturer").value;
+            const modelSelect = document.getElementById("model");
+            modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
+            
+            if (!selectedManufacturer || !window.cameraData) return;
+    
+            const models = window.cameraData
+                .filter(camera => camera["Manufacturer"] === selectedManufacturer)
+                .map(camera => camera["Model"]);
+    
+            models.forEach(model => {
+                let option = document.createElement("option");
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        }
+    
+        function displaySensorInfo() {
+            const selectedModel = document.getElementById("model").value;
+            const sensorRow = document.getElementById("sensor-data");
+    
+            if (!selectedModel || !window.cameraData) {
+                sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
+                return;
+            }
+    
+            const selectedCamera = window.cameraData.find(camera => camera["Model"] === selectedModel);
+    
+            sensorRow.innerHTML = `
+                <td>${selectedCamera["Resolution Width"]}</td>
+                <td>${selectedCamera["Resolution Height"]}</td>
+                <td>${selectedCamera["Sensor mm Width"]}</td>
+                <td>${selectedCamera["Sensor mm Height"]}</td>
+                <td>${selectedCamera["Sensor mm Diagonal"]}</td>
+                <td>${selectedCamera["Sensor Inches Width"]}</td>
+                <td>${selectedCamera["Sensor Inches Height"]}</td>
+                <td>${selectedCamera["Sensor Inches Diagonal"]}</td>
+            `;
+        }
     </script>
 
 </body>
