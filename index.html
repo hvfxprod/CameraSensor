@@ -75,13 +75,16 @@
                 .then(response => response.json())
                 .then(data => {
                     cameraData = data;
+                    console.log(cameraData); // 데이터 확인
                     populateManufacturers();
-                });
+                })
+                .catch(error => console.error("Error fetching data:", error));
         }
 
         function populateManufacturers() {
             const manufacturerSelect = document.getElementById("manufacturer");
-            const manufacturers = [...new Set(cameraData.map(camera => camera.Manufacturer))];
+            manufacturerSelect.innerHTML = '<option value="">-- Select Manufacturer --</option>';
+            const manufacturers = [...new Set(cameraData.map(camera => camera["Manufacturer"]))];
             
             manufacturers.forEach(manufacturer => {
                 let option = document.createElement("option");
@@ -98,8 +101,8 @@
             
             if (!selectedManufacturer) return;
             
-            const models = cameraData.filter(camera => camera.Manufacturer === selectedManufacturer)
-                                     .map(camera => camera.Model);
+            const models = cameraData.filter(camera => camera["Manufacturer"] === selectedManufacturer)
+                                     .map(camera => camera["Model"]);
             
             models.forEach(model => {
                 let option = document.createElement("option");
@@ -118,7 +121,7 @@
                 return;
             }
             
-            const selectedCamera = cameraData.find(camera => camera.Model === selectedModel);
+            const selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
             
             sensorRow.innerHTML = `
                 <td>${selectedCamera["Resolution Width"]}</td>
