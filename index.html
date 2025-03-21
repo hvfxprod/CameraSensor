@@ -14,7 +14,7 @@
         h2 {
             color: #333;
         }
-        select {
+        input, select {
             padding: 10px;
             margin: 10px;
             font-size: 16px;
@@ -35,10 +35,31 @@
             background-color: #007BFF;
             color: white;
         }
+        .autocomplete-list {
+            border: 1px solid #ddd;
+            background: white;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            width: calc(100% - 20px);
+            z-index: 1000;
+        }
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-item:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
     <h2>Camera Sensor Database</h2>
+    
+    <label for="search">Search Camera Model:</label>
+    <input type="text" id="search" placeholder="Type to search..." oninput="searchModels()">
+    <div id="autocomplete-list" class="autocomplete-list"></div>
+    
     <label for="manufacturer">Select Manufacturer:</label>
     <select id="manufacturer" onchange="updateModels()">
         <option value="">-- Select Manufacturer --</option>
