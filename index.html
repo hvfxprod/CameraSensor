@@ -38,7 +38,7 @@
         .autocomplete-list {
             border: 1px solid #ddd;
             background: white;
-            max-height: 400px;
+            max-height: 300px; /* 최대 10개 표시 가능하도록 조정 */
             overflow-y: auto;
             position: absolute;
             width: calc(100% - 20px);
@@ -9076,7 +9076,8 @@
 
             const filteredModels = cameraData
                 .map(camera => camera.Model)
-                .filter(model => model.toLowerCase().includes(input));
+                .filter(model => model.toLowerCase().includes(input))
+                .slice(0, 10);  // 최대 10개까지만 표시
 
             filteredModels.forEach(model => {
                 let div = document.createElement("div");
@@ -9094,26 +9095,69 @@
         function selectModelFromSearch(modelName) {
             const modelSelect = document.getElementById("model");
             modelSelect.value = modelName;
-            displaySensorInfo(modelName);
+            displaySensorInfo(modelName); // 🔹 모델 선택 시 데이터 표시
+        }
+
+        function populateManufacturers() {
+            const manufacturerSelect = document.getElementById("manufacturer");
+            manufacturerSelect.innerHTML = '<option value="">-- Select Manufacturer --</option>';
+            const manufacturers = [...new Set(cameraData.map(camera => camera["Manufacturer"]))];
+
+            manufacturers.forEach(manufacturer => {
+                let option = document.createElement("option");
+                option.value = manufacturer;
+                option.textContent = manufacturer;
+                manufacturerSelect.appendChild(option);
+            });
+        }
+
+        function updateModels() {
+            const selectedManufacturer = document.getElementById("manufacturer").value;
+            const modelSelect = document.getElementById("model");
+            modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
+            
+            if (!selectedManufacturer) return;
+
+            const models = cameraData
+                .filter(camera => camera["Manufacturer"] === selectedManufacturer)
+                .map(camera => camera["Model"]);
+
+            models.forEach(model => {
+                let option = document.createElement("option");
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
         }
 
         function displaySensorInfo(selectedModel = null) {
-                const modelSelect = document.getElementById("model");
-                const sensorRow = document.getElementById("sensor-data");
-        
-                let selectedCamera;
-        
-                if (selectedModel) {
-                    selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
-                } else {
-                    selectedCamera = cameraData.find(camera => camera["Model"] === modelSelect.value);
-                }
-        
-                if (!selectedCamera) {
-                    sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
-                    return;
-        }
+            const modelSelect = document.getElementById("model");
+            const sensorRow = document.getElementById("sensor-data");
 
+            let selectedCamera;
+
+            if (selectedModel) {
+                selectedCamera = cameraData.find(camera => camera["Model"] === selectedModel);
+            } else {
+                selectedCamera = cameraData.find(camera => camera["Model"] === modelSelect.value);
+            }
+
+            if (!selectedCamera) {
+                sensorRow.innerHTML = '<td colspan="8">Select a camera to view details</td>';
+                return;
+            }
+
+            sensorRow.innerHTML = `
+                <td>${selectedCamera["Resolution Width"]}</td>
+                <td>${selectedCamera["Resolution Height"]}</td>
+                <td>${selectedCamera["Sensor mm Width"]}</td>
+                <td>${selectedCamera["Sensor mm Height"]}</td>
+                <td>${selectedCamera["Sensor mm Diagonal"]}</td>
+                <td>${selectedCamera["Sensor Inches Width"]}</td>
+                <td>${selectedCamera["Sensor Inches Height"]}</td>
+                <td>${selectedCamera["Sensor Inches Diagonal"]}</td>
+            `;
+        }
 
         document.addEventListener("DOMContentLoaded", populateManufacturers);
     </script>
